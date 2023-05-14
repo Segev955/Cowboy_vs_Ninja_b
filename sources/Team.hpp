@@ -40,6 +40,7 @@ protected:
     Point pos;
     int hitPoint;
     string name;
+    bool team;
 
 public:
     Character();
@@ -52,6 +53,10 @@ public:
     int getHitPoint();
     virtual string print() const;
     virtual void attack(Character *enemy);
+    bool inTeam();
+    void setTeam(bool is);
+    friend bool operator==(const Character& c1, const Character& c2);
+
 
     friend ostream &operator <<(ostream &output, const Character &character);
 
@@ -111,16 +116,19 @@ public:
     void print() const;
     void nextLeader();
     Character* closest(Team *team);
+    vector<Character*> sort(vector<Character*> list);
 
     friend ostream &operator <<(ostream &output, const Team &team);
 
 };
 
 class Team2: public Team{
-    Team2(Character *leader);
+public:
+    Team2(Character *leader): Team(leader){}
 };
 
 
 #endif //COWBOY_VS_NINJA_A_TEAM_HPP
+
 
 

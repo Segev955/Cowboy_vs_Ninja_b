@@ -24,8 +24,14 @@ Point moveTowards(Point src, Point des, double dis) {
     if (dis >= srcToDes) {
         return des;
     }
-    //not finish
-    return Point(1,1);
+    //move close as you can:
+    double X = des.x - src.x;
+    double Y = des.y - src.y;
+    double len = sqrt(X*X + Y*Y);
+
+    double moveX = X / len * dis;
+    double moveY = Y / len * dis;
+    return Point(src.x + moveX, src.y + moveY);
 }
 
 double Point::getX() {
@@ -40,6 +46,7 @@ double Point::getY() {
 bool Point::operator==(const Point &other) const {
     return x == other.x && y == other.y;
 }
+
 
 
 

@@ -6,11 +6,11 @@
 
 using namespace ariel;
 
-Character::Character() : pos(0, 0), hitPoint(0) {}
+Character::Character() : pos(0, 0), hitPoint(0), team(false) {}
 
 //constructor
 Character::Character(const string &name, const Point &pos, const int hitPoint) : name(name), pos(pos),
-                                                                                 hitPoint(hitPoint) {}
+                                                                                 hitPoint(hitPoint), team(false) {}
 
 bool Character::isAlive() const {
     if (hitPoint > 0)
@@ -23,6 +23,9 @@ double Character::distance(const Character *c) {
 }
 
 void Character::hit(int num) {
+    if (num < 0) {
+        throw invalid_argument("hit: number cant be negative");
+    }
     this->hitPoint -= num;
 }
 
@@ -48,6 +51,18 @@ string Character::print() const {
 
 void Character::attack(Character *enemy) {}
 
+bool Character::inTeam() {
+    return team;
+}
+
+void Character::setTeam(bool is) {
+    team = is;
+}
+
+bool operator==(const Character& c1, const Character& c2) {
+    return &c1 == &c2;
+}
+
 //Output
 ostream &operator<<(ostream &output, const Character &character) {
     output << character.print();
@@ -58,6 +73,12 @@ ostream &operator<<(ostream &output, const Character &character) {
 Cowboy::Cowboy(const string &name, const Point &pos) : Character(name, pos, 110), bullets(6) {}
 
 void Cowboy::shoot(Character *enemy) {
+    if (*this == *enemy) {
+        throw runtime_error("Can't attack yourself");
+    }
+    if (!enemy->isAlive() || !isAlive()) {
+        throw runtime_error("The Character is dead");
+    }
     if (isAlive() && hasboolets()) {
         enemy->hit(10);
         bullets--;
@@ -73,6 +94,9 @@ bool Cowboy::hasboolets() {
 }
 
 void Cowboy::reload() {
+    if (!isAlive()) {
+        throw runtime_error("The Character is dead");
+    }
     this->bullets = 6;
 }
 
@@ -105,8 +129,14 @@ void Ninja::move(Character *enemy) {
 }
 
 void Ninja::slash(Character *enemy) {
+    if (*this == *enemy) {
+        throw runtime_error("Can't attack yourself");
+    }
+    if (!enemy->isAlive() || !isAlive()) {
+        throw runtime_error("The Character is dead");
+    }
     if (isAlive() && this->getLocation().distance(enemy->getLocation()) < 1) {
-        enemy->hit(31);
+        enemy->hit(40);
     } else if (this->getLocation().distance(enemy->getLocation()) >= 1) {
         move(enemy);
     }
@@ -131,4 +161,5 @@ int Ninja::getSpeed() {
 }
 
 //Ninja -----------------------------------------------------
+
 
