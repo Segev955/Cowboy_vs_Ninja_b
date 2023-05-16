@@ -175,13 +175,22 @@ void Ninja::slash(Character *enemy) {
     }
     if (isAlive() && this->getLocation().distance(enemy->getLocation()) < 1) {
         enemy->hit(40);
-    } else if (this->getLocation().distance(enemy->getLocation()) >= 1) {
-        move(enemy);
     }
 }
 
 void Ninja::attack(Character *enemy) {
-    slash(enemy);
+    if (*this == *enemy) {
+        throw runtime_error("Can't attack yourself");
+    }
+    if (!enemy->isAlive() || !isAlive()) {
+        throw runtime_error("The Character is dead");
+    }
+    if (isAlive() && this->getLocation().distance(enemy->getLocation()) < 1) {
+        slash(enemy);
+    } else if (this->getLocation().distance(enemy->getLocation()) >= 1) {
+        move(enemy);
+    }
+
 }
 
 string Ninja::print() const {
@@ -205,5 +214,6 @@ TrainedNinja::TrainedNinja(const string &name, const Point &pos) : Ninja(name,po
 OldNinja::OldNinja(const string &name, const Point &pos) : Ninja(name,pos,150, 8){}
 
 //Ninja -----------------------------------------------------
+
 
 

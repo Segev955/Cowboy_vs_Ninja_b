@@ -75,22 +75,21 @@ vector<Character *> Team::sort(vector<Character *> list) {
 }
 
 void Team::attack(Team *enemy) {
-
     if (enemy == nullptr) {
         throw invalid_argument("enemy = null");
     }
     if (stillAlive() == 0 || enemy->stillAlive() == 0) {
         throw runtime_error("The whole team is dead");
     }
-//    cout << "S***********:    ";
-
     nextLeader();
     if (!this->leader->isAlive())
         return;
     vector<Character *> newTeammates = sort(this->teamMates);
     for (Character* player : newTeammates) {
+        if (enemy->stillAlive() == 0) {
+            return;
+        }
         enemy->nextLeader();
-//        cout << enemy->leader->print() << endl;
         if (!enemy->leader->isAlive()) {
             break;
         }
@@ -124,5 +123,6 @@ ostream &operator<<(ostream &output, const Team &team) {
     }
     return output;
 }
+
 
 
