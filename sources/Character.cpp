@@ -9,8 +9,46 @@ using namespace ariel;
 Character::Character() : pos(0, 0), hitPoint(0), team(false) {}
 
 //constructor
-Character::Character(const string &name, const Point &pos, const int hitPoint) : name(name), pos(pos),
-                                                                                 hitPoint(hitPoint), team(false) {}
+Character::Character(const string &name, const Point &pos, int hitPoint) : name(name), pos(pos),
+                                                                           hitPoint(hitPoint), team(false) {}
+//destructor
+Character::~Character() {}
+
+//Copy constructor
+Character::Character(const Character &other) : pos(other.pos) {
+    this->name = other.name;
+    this->hitPoint = other.hitPoint;
+    this->team = other.team;
+}
+
+//Copy assignment operator
+Character &Character::operator=(const Character &other) {
+    if (this != &other) {
+        this->name = other.name;
+        this->pos = other.pos;
+        this->hitPoint = other.hitPoint;
+        this->team = other.team;
+    }
+    return *this;
+}
+
+//Move constructor
+Character::Character(Character &&other) noexcept : pos(move(other.pos)) { //cant Throw
+this->name = move(other.name);
+this->hitPoint = other.hitPoint;
+this->team = other.team;
+}
+
+//Move assignment operator
+Character& Character::operator=(Character&& other) noexcept {
+if (this != &other) {
+this->name = move(other.name);
+this->pos = move(other.pos);
+this->hitPoint = other.hitPoint;
+this->team = other.team;
+}
+return *this;
+}
 
 bool Character::isAlive() const {
     if (hitPoint > 0)
@@ -18,8 +56,8 @@ bool Character::isAlive() const {
     return false;
 }
 
-double Character::distance(const Character *c) {
-    return this->pos.distance(c->pos);
+double Character::distance(const Character *character) {
+    return this->pos.distance(character->pos);
 }
 
 void Character::hit(int num) {
@@ -55,12 +93,12 @@ bool Character::inTeam() {
     return team;
 }
 
-void Character::setTeam(bool is) {
-    team = is;
+void Character::setTeam(bool ist) {
+    team = ist;
 }
 
-bool operator==(const Character& c1, const Character& c2) {
-    return &c1 == &c2;
+bool operator==(const Character& ch1, const Character& ch2) {
+    return &ch1 == &ch2;
 }
 
 //Output
@@ -159,6 +197,12 @@ string Ninja::print() const {
 int Ninja::getSpeed() {
     return speed;
 }
+
+YoungNinja::YoungNinja(const string &name, const Point &pos) : Ninja(name,pos,100, 14){}
+
+TrainedNinja::TrainedNinja(const string &name, const Point &pos) : Ninja(name,pos,120, 12){}
+
+OldNinja::OldNinja(const string &name, const Point &pos) : Ninja(name,pos,150, 8){}
 
 //Ninja -----------------------------------------------------
 

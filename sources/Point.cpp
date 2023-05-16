@@ -7,11 +7,11 @@
 
 using namespace ariel;
 
-Point::Point(double x, double y): x(x), y(y) {}
+Point::Point(double parX, double parY): x(parX), y(parY) {}
 
-double Point::distance(Point p) {
-    double a = pow(p.x - this->x, 2);
-    double b = pow(p.y - this->y, 2);
+double Point::distance(Point point) {
+    double a = pow(point.x - this->x, 2);
+    double b = pow(point.y - this->y, 2);
     return sqrt(a + b);
 }
 
