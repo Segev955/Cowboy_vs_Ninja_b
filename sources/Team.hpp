@@ -27,7 +27,7 @@ public:
     Point(double parX, double parY);
     double distance(Point point);
     string print() const;
-    friend Point moveTowards(Point src, Point des, double dis);
+    static Point moveTowards(Point src, Point des, double dis);
     double getX();
     double getY();
     bool operator==(const Point& other) const;
@@ -111,15 +111,22 @@ public:
 
 
 class Team {
-private:
+protected:
     vector<Character*> teamMates;
     Character *leader;
 public:
     Team(Character *leader);
+    virtual ~Team(); //Destructor
+    Team(const Team &other); //copy
+    Team &operator=(const Team &other); //Copy assignment operator
+    Team(Team &&other) noexcept; //Move constructor
+    Team &operator=(Team &&other) noexcept; //Move assignment operator
+
+
     void add(Character *character);
-    void attack(Team *enemy);
+    virtual void attack(Team *enemy);
     int stillAlive() const;
-    void print() const;
+    void print();
     void nextLeader();
     Character *getLeader();
     Character* closest(Team *team);
@@ -132,10 +139,18 @@ public:
 class Team2: public Team{
 public:
     Team2(Character *leader): Team(leader){}
+    vector<Character*> sort(vector<Character*> list);
+};
+
+class SmartTeam: public Team {
+    SmartTeam(Character *leader): Team(leader){}
+    void attack(Team *enemy) override;
+    vector<Character*> smartSort(vector<Character*> list, Character *enemy);
 };
 
 
 #endif //COWBOY_VS_NINJA_A_TEAM_HPP
+
 
 
 

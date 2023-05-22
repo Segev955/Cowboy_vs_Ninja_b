@@ -34,18 +34,18 @@ Character &Character::operator=(const Character &other) {
 
 //Move constructor
 Character::Character(Character &&other) noexcept : pos(move(other.pos)) { //cant Throw
-this->name = move(other.name);
-this->hitPoint = other.hitPoint;
-this->team = other.team;
+    this->name = move(other.name);
+    this->hitPoint = other.hitPoint;
+    this->team = other.team;
 }
 
 //Move assignment operator
 Character& Character::operator=(Character&& other) noexcept {
 if (this != &other) {
-this->name = move(other.name);
-this->pos = move(other.pos);
-this->hitPoint = other.hitPoint;
-this->team = other.team;
+    this->name = move(other.name);
+    this->pos = move(other.pos);
+    this->hitPoint = other.hitPoint;
+    this->team = other.team;
 }
 return *this;
 }
@@ -56,17 +56,19 @@ bool Character::isAlive() const {
     return false;
 }
 
-double Character::distance(const Character *character) {
+//Use the distance func from 'Point class
+double Character::distance(const Character *character) { 
     return this->pos.distance(character->pos);
 }
 
 void Character::hit(int num) {
-    if (num < 0) {
+    if (num < 0) { //can't add hitPoints
         throw invalid_argument("hit: number cant be negative");
     }
     this->hitPoint -= num;
 }
 
+//Getters:
 string Character::getName() {
     return this->name;
 }
@@ -87,12 +89,15 @@ string Character::print() const {
     }
 }
 
+//virtual (use only by Ninja/Cowboy)
 void Character::attack(Character *enemy) {}
 
+//check if a character in a team
 bool Character::inTeam() {
     return team;
 }
 
+//set if in team
 void Character::setTeam(bool ist) {
     team = ist;
 }
@@ -108,6 +113,7 @@ ostream &operator<<(ostream &output, const Character &character) {
 }
 
 //Cowboy ----------------------------------------------------
+//Constructor
 Cowboy::Cowboy(const string &name, const Point &pos) : Character(name, pos, 110), bullets(6) {}
 
 void Cowboy::shoot(Character *enemy) {
@@ -163,7 +169,7 @@ Ninja::Ninja(const string &name, const Point &pos, int hitPoint, int speed) : Ch
                                                                               speed(speed) {}
 
 void Ninja::move(Character *enemy) {
-    this->pos = moveTowards(this->getLocation(), enemy->getLocation(), this->speed);
+    this->pos = Point::moveTowards(this->getLocation(), enemy->getLocation(), this->speed);
 }
 
 void Ninja::slash(Character *enemy) {
@@ -174,7 +180,7 @@ void Ninja::slash(Character *enemy) {
         throw runtime_error("The Character is dead");
     }
     if (isAlive() && this->getLocation().distance(enemy->getLocation()) < 1) {
-        enemy->hit(40);
+        enemy->hit(40); //if the ninja is alive and less than 1 distance
     }
 }
 
@@ -214,6 +220,7 @@ TrainedNinja::TrainedNinja(const string &name, const Point &pos) : Ninja(name,po
 OldNinja::OldNinja(const string &name, const Point &pos) : Ninja(name,pos,150, 8){}
 
 //Ninja -----------------------------------------------------
+
 
 
 

@@ -5,12 +5,57 @@
 #include "Team.hpp"
 
 Team::Team(Character *leader) : leader(leader) {
-//    if (leader->inTeam()) {
-//        throw runtime_error("this teammates is already in a team");
-//    }
     this->add(leader);
     leader->setTeam(true);
 }
+
+//Destructor
+Team::~Team() {
+    for (Character *c : this->teamMates) {
+        delete c;
+    }
+    teamMates.clear();
+    leader = nullptr;
+}
+
+//copy
+Team::Team(const Team &other) : leader(other.leader) {
+    for (Character *c : other.teamMates) {
+        this->add(c);
+    }
+}
+
+//Copy assignment operator
+Team &Team::operator=(const Team &other) {
+    if (this != &other) {
+        this->leader = other.leader;
+        for (Character *c : other.teamMates) {
+            this->add(c);
+        }
+    }
+    return *this;
+}
+
+//Move constructor
+Team::Team(Team &&other) noexcept : leader(other.leader), teamMates(move(other.teamMates)) {
+    other.leader = nullptr;
+}
+
+//Move assignment operator
+Team &Team::operator=(Team &&other) noexcept {
+    if (this != &other) {
+        for (Character *c : teamMates) {
+            delete c;
+        }
+        teamMates.clear();
+
+        leader = other.leader;
+        teamMates = move(other.teamMates);
+        other.leader = nullptr;
+    }
+    return *this;
+}
+
 
 void Team::add(Character *character) {
     if (character->inTeam()) {
@@ -113,8 +158,11 @@ int Team::stillAlive() const {
     return c;
 }
 
-void Team::print() const {
-    cout << *this << endl;
+void Team::print() {
+    vector<Character *> newTeammates = sort(this->teamMates);
+    for (auto item: newTeammates) {
+        cout << *item << endl;
+    }
 }
 
 ostream &operator<<(ostream &output, const Team &team) {
@@ -124,5 +172,50 @@ ostream &operator<<(ostream &output, const Team &team) {
     return output;
 }
 
+//Team2
 
+
+vector<Character *> Team2::sort(vector<Character *> list) {
+    return list;
+}
+
+//SmartTeam
+
+vector<Character *> SmartTeam::smartSort(vector<Character *> list, Character *enemy) {
+    vector<Character *> newList = list;
+    //lambda:
+    auto compare = [enemy](Character* a, Character* b) {
+        return a->distance(enemy) < b->distance(enemy);
+    };
+    std::sort(newList.begin(), newList.end(), compare);
+    return newList;
+}
+
+void SmartTeam::attack(Team *enemy) {
+    if (enemy == nullptr) {
+        throw invalid_argument("enemy = null");
+    }
+    if (stillAlive() == 0 || enemy->stillAlive() == 0) {
+        throw runtime_error("The whole team is dead");
+    }
+    nextLeader();
+    if (!this->leader->isAlive())
+        return;
+    if (enemy->stillAlive() == 0) {
+        return;
+    }
+    enemy->nextLeader();
+    Character *c = closest(enemy);
+    if(c == nullptr || !c->isAlive()) {
+        return;
+    }
+    vector<Character *> newTeammates = smartSort(this->teamMates, c);
+    for (Character* player : newTeammates) {
+        if (!c->isAlive()) {
+            c = closest(enemy);
+        }
+        player->attack(c);
+    }
+    enemy->nextLeader();
+}
 

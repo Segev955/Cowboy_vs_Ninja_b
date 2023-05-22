@@ -7,9 +7,10 @@
 
 using namespace ariel;
 
+//Constructor
 Point::Point(double parX, double parY): x(parX), y(parY) {}
 
-double Point::distance(Point point) {
+double Point::distance(Point point) { //sqrt((x1-x2)^2 + (y1-y2)^2)
     double a = pow(point.x - this->x, 2);
     double b = pow(point.y - this->y, 2);
     return sqrt(a + b);
@@ -19,9 +20,12 @@ string Point::print() const{
     return "(" + to_string(this->x) + "," + to_string(this->y)  + ")";
 }
 
-Point moveTowards(Point src, Point des, double dis) {
+Point Point::moveTowards(Point src, Point des, double dis) {
+    if (dis < 0) {
+        throw invalid_argument("Negative distance");
+    }
     double srcToDes = src.distance(des);
-    if (dis >= srcToDes) {
+    if (dis >= srcToDes) { //if less than 'dis -> arrive to destination
         return des;
     }
     //move close as you can:
@@ -46,6 +50,7 @@ double Point::getY() {
 bool Point::operator==(const Point &other) const {
     return x == other.x && y == other.y;
 }
+
 
 
 
